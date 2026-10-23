@@ -1,0 +1,112 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ALZIA</title>
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ALZIA">
+<meta name="theme-color" content="#0b1a2e">
+<style>
+:root{--bg:#0b1a2e;--card:#13294a;--line:#1f3b63;--tq:#1fc7c9;--tx:#fff;--mut:#9fb3c8;
+--hambre:#ff8c1a;--tristeza:#9b5de5;--bienestar:#2ecc71;--neutral:#9aa5b1}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.w{max-width:520px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px 24px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.logo{font-weight:800;font-size:26px;letter-spacing:3px;color:var(--tq)}
+.sub{font-size:12px;color:var(--mut);letter-spacing:.5px}
+.chip{display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 10px;border-radius:99px;background:var(--card);border:1px solid var(--line)}
+.dot{width:8px;height:8px;border-radius:50%;background:#ff6b6b}.on .dot{background:var(--bienestar);box-shadow:0 0 0 0 rgba(46,204,113,.6);animation:p 1.6s infinite}
+@keyframes p{70%{box-shadow:0 0 0 7px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.lab{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:1px}
+.estado{margin-bottom:12px;display:flex;align-items:center;gap:14px;border-left:6px solid var(--neutral)}
+.aro{flex:none;width:54px;height:54px;border-radius:50%;border:5px solid var(--neutral);display:grid;place-items:center}
+.aro i{width:16px;height:16px;border-radius:50%;background:var(--neutral)}
+.est{font-size:26px;font-weight:800;line-height:1.15;color:var(--neutral);margin-top:2px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{font-size:46px;font-weight:800;line-height:1;margin-top:10px;font-variant-numeric:tabular-nums}
+.u{font-size:13px;color:var(--mut);margin-top:6px;min-height:17px}
+.fila{display:flex;align-items:center;justify-content:space-between}
+.cor{width:22px;height:22px;fill:#ff5a7a}.late{animation:l var(--per,1s) infinite}
+@keyframes l{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}}
+.full{grid-column:1/-1}
+.dedo{font-size:14px;font-weight:700;padding:5px 10px;border-radius:99px;background:#2a1f2f;color:#ff8a8a}
+.dedo.si{background:#143a2a;color:#5ee08a}
+.pie{margin-top:14px;font-size:12px;color:var(--mut);text-align:center;line-height:1.5}
+.aviso{display:none;margin-bottom:12px;padding:12px 14px;border-radius:14px;background:#3a1d24;color:#ffb3b3;font-size:14px}
+</style></head><body><div class="w">
+<header><div><div class="logo">ALZIA</div><div class="sub">Monitoreo de signos</div></div>
+<div class="chip" id="chip"><span class="dot"></span><span id="conx">Conectando…</span></div></header>
+
+<div class="aviso" id="aviso"></div>
+
+<div class="card estado" id="cEst"><div class="aro" id="aro"><i id="aroi"></i></div>
+<div><div class="lab">Estado de la niña</div><div class="est" id="est">Sin dato</div>
+<div class="u" id="estu">Visión artificial</div></div></div>
+
+<div class="g">
+<div class="card"><div class="fila"><div class="lab">Frecuencia cardiaca</div>
+<svg class="cor" id="cor" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.5 1.2 4.3 2.4.8-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg></div>
+<div class="big" id="bpm">--</div><div class="u" id="bpmu">lpm</div></div>
+<div class="card"><div class="lab">Oxigenación</div><div class="big" id="spo2">--</div><div class="u" id="spo2u">% SpO₂</div></div>
+<div class="card full"><div class="fila"><div><div class="lab">Distancia</div><div class="big" id="dist">--</div><div class="u">cm</div></div>
+<div style="text-align:right"><div class="lab" style="margin-bottom:8px">Sensor en el dedo</div><span class="dedo" id="dedo">No</span></div></div></div>
+</div>
+
+<div class="pie" id="pie">—</div>
+<div class="pie">Sistema de acompañamiento. No reemplaza un equipo médico.</div>
+</div>
+<script>
+const AIO_USER='JuanOsunar';                 // usuario de Adafruit IO
+const FEEDS=['bpm','spo2','distancia','dedo','estado'];
+const EST={hambre:['Posible hambre','var(--hambre)'],tristeza:['Posible tristeza','var(--tristeza)'],
+bienestar:['Posible bienestar','var(--bienestar)'],neutral:['Posible neutralidad','var(--neutral)']};
+const $=i=>document.getElementById(i);
+let modo=null,ultimo=0;
+
+async function leerLocal(){const r=await fetch('/datos',{cache:'no-store'});if(!r.ok)throw 0;
+const d=await r.json();if(typeof d.bpm!=='number')throw 0;d.t=Date.now();return d;}
+
+async function leerNube(){
+ const res=await Promise.all(FEEDS.map(f=>fetch('https://io.adafruit.com/api/v2/'+AIO_USER+'/feeds/'+f+'/data/last',{cache:'no-store'})
+   .then(r=>r.ok?r.json():null).catch(()=>null)));
+ const v=k=>{const x=res[FEEDS.indexOf(k)];return x?x.value:null};
+ const ts=res.filter(Boolean).map(x=>Date.parse(x.created_at)||0);
+ if(!ts.length)throw 0;
+ return{bpm:+v('bpm')||0,spo2:+v('spo2')||0,ir:v('spo2')!==null,dist:v('distancia')!==null?+v('distancia'):-1,
+   dedo:v('dedo')==='1',estado:v('estado')||'',t:Math.max(...ts)};}
+
+function pintar(d){
+ const viejo=(Date.now()-d.t)/1000, sinSenal=viejo>60;
+ $('chip').className='chip'+(sinSenal?'':' on');
+ $('conx').textContent=sinSenal?'Sin señal':(modo==='local'?'En vivo':'En línea');
+ const av=$('aviso');
+ if(sinSenal){av.style.display='block';av.textContent='No llegan datos de la silla desde hace '+Math.round(viejo/60)+' min. Revisa que esté encendida y con internet.';}
+ else av.style.display='none';
+ // estado de visión
+ const e=EST[d.estado];
+ const col=e?e[1]:'var(--neutral)';
+ $('est').textContent=e?e[0]:'Sin dato';$('est').style.color=col;
+ $('cEst').style.borderLeftColor=col;$('aro').style.borderColor=col;$('aroi').style.background=col;
+ $('estu').textContent=e?'Visión artificial':'Esperando a la cámara';
+ // signos
+ const hay=d.dedo&&d.bpm>0;
+ $('bpm').textContent=hay?d.bpm:'--';
+ $('bpmu').textContent=!d.dedo?'Sensor sin contacto':(d.bpm>0?'lpm':'Midiendo…');
+ const c=$('cor');if(hay){c.classList.add('late');c.style.setProperty('--per',(60/d.bpm).toFixed(2)+'s');}else c.classList.remove('late');
+ if(d.ir){$('spo2').textContent=(d.dedo&&d.spo2>0)?d.spo2:'--';$('spo2u').textContent='% SpO₂';}
+ else{$('spo2').textContent='N/D';$('spo2u').textContent='Requiere sensor IR';}
+ $('dist').textContent=d.dist>=0?(+d.dist).toFixed(1):'--';
+ $('dedo').textContent=d.dedo?'Sí':'No';$('dedo').className='dedo'+(d.dedo?' si':'');
+ ultimo=d.t;
+}
+
+function reloj(){if(!ultimo)return;const s=Math.max(0,Math.round((Date.now()-ultimo)/1000));
+ $('pie').textContent=(modo==='local'?'Conexión directa con la silla':'Vía internet')+' · actualizado hace '+(s<60?s+' s':Math.round(s/60)+' min');}
+
+async function ciclo(){
+ try{
+  if(modo!=='nube'){try{pintar(await leerLocal());modo='local';}catch(e){if(modo==='local')throw e;modo='nube';}}
+  if(modo==='nube')pintar(await leerNube());
+ }catch(e){$('chip').className='chip';$('conx').textContent='Sin conexión';}
+ setTimeout(ciclo,modo==='local'?1000:10000);
+}
+setInterval(reloj,1000);ciclo();
+</script></body></html>
