@@ -1,112 +1,528 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ALZIA</title>
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ALZIA">
-<meta name="theme-color" content="#0b1a2e">
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F1F31">
+<meta name="robots" content="noindex, nofollow">
+<title>ALZIA · Monitoreo en casa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b1a2e;--card:#13294a;--line:#1f3b63;--tq:#1fc7c9;--tx:#fff;--mut:#9fb3c8;
---hambre:#ff8c1a;--tristeza:#9b5de5;--bienestar:#2ecc71;--neutral:#9aa5b1}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);
-font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
-.w{max-width:520px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px 24px}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.logo{font-weight:800;font-size:26px;letter-spacing:3px;color:var(--tq)}
-.sub{font-size:12px;color:var(--mut);letter-spacing:.5px}
-.chip{display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 10px;border-radius:99px;background:var(--card);border:1px solid var(--line)}
-.dot{width:8px;height:8px;border-radius:50%;background:#ff6b6b}.on .dot{background:var(--bienestar);box-shadow:0 0 0 0 rgba(46,204,113,.6);animation:p 1.6s infinite}
-@keyframes p{70%{box-shadow:0 0 0 7px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
-.lab{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:1px}
-.estado{margin-bottom:12px;display:flex;align-items:center;gap:14px;border-left:6px solid var(--neutral)}
-.aro{flex:none;width:54px;height:54px;border-radius:50%;border:5px solid var(--neutral);display:grid;place-items:center}
-.aro i{width:16px;height:16px;border-radius:50%;background:var(--neutral)}
-.est{font-size:26px;font-weight:800;line-height:1.15;color:var(--neutral);margin-top:2px}
-.g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.big{font-size:46px;font-weight:800;line-height:1;margin-top:10px;font-variant-numeric:tabular-nums}
-.u{font-size:13px;color:var(--mut);margin-top:6px;min-height:17px}
-.fila{display:flex;align-items:center;justify-content:space-between}
-.cor{width:22px;height:22px;fill:#ff5a7a}.late{animation:l var(--per,1s) infinite}
-@keyframes l{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}}
-.full{grid-column:1/-1}
-.dedo{font-size:14px;font-weight:700;padding:5px 10px;border-radius:99px;background:#2a1f2f;color:#ff8a8a}
-.dedo.si{background:#143a2a;color:#5ee08a}
-.pie{margin-top:14px;font-size:12px;color:var(--mut);text-align:center;line-height:1.5}
-.aviso{display:none;margin-bottom:12px;padding:12px 14px;border-radius:14px;background:#3a1d24;color:#ffb3b3;font-size:14px}
-</style></head><body><div class="w">
-<header><div><div class="logo">ALZIA</div><div class="sub">Monitoreo de signos</div></div>
-<div class="chip" id="chip"><span class="dot"></span><span id="conx">Conectando…</span></div></header>
+:root{
+  --fondo:#14283F; --barra:#0F1F31; --tarjeta:#1A3352; --borde:#25476B; --hundido:#0F1F31; --linea:#1C3754;
+  --texto:#FFFFFF; --suave:#8FB3C9; --apagado:#5E7A93; --tq:#1FC7C9;
+  --bien:#5ED6B0; --neutro:#8FB3C9; --hambre:#F2B65E; --triste:#B49CF5; --rojo:#FF6B66;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fondo);color:var(--texto);font-family:'Inter',system-ui,-apple-system,sans-serif;font-feature-settings:'tnum' 1;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--barra);border-bottom:1px solid var(--linea);padding:12px max(16px, calc((100vw - 1180px) / 2 + 24px));display:flex;align-items:center;gap:12px}
+header img{height:38px;width:auto}
+.tit{flex:1;min-width:0}
+.tit b{display:block;font-size:16px;font-weight:700}
+.conexion{display:flex;align-items:center;gap:6px;font-size:12px;margin-top:3px;color:var(--bien)}
+.conexion i{width:7px;height:7px;border-radius:4px;background:currentColor;animation:punto 1.6s ease-in-out infinite}
+.conexion.mal{color:var(--hambre)} .conexion.mal i{animation:none}
+.campana{position:relative;width:44px;height:44px;border-radius:22px;border:1px solid var(--borde);background:var(--fondo);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--suave)}
+.campana.hay{color:var(--hambre)}
+.campana span{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--hambre);color:var(--fondo);font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center}
+.campana.hay span{display:flex}
+main{max-width:1180px;margin:0 auto;padding:16px;display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:900px){ main{grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:start;padding:24px} .col{display:flex;flex-direction:column;gap:14px} }
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--tarjeta);border:1px solid var(--borde);border-radius:10px;padding:14px;min-width:0}
+.eti{font-size:11px;font-weight:700;letter-spacing:1.1px;color:var(--suave);text-transform:uppercase}
+.fila{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.nota{font-size:12px;color:var(--suave)}
+.grande{font-size:36px;font-weight:800;line-height:1}
+.uni{font-size:12px;color:var(--suave)}
+.dos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.animo{display:flex;align-items:center;gap:14px;padding:16px}
+.cara{width:56px;height:56px;border-radius:28px;border:2px solid var(--apagado);display:flex;align-items:center;justify-content:center;flex:none}
+.animo .estado{font-size:22px;font-weight:800;margin-top:2px}
+.corazon{animation:latir 1s ease-in-out infinite;transform-origin:center}
+.quieto .corazon{animation:none;opacity:.35}
+.onda{height:90px;border-radius:6px;background:var(--hundido);border:1px solid var(--linea);overflow:hidden}
+.silla3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.mini{background:var(--hundido);border:1px solid var(--linea);border-radius:8px;padding:10px}
+.mini .v{font-size:18px;font-weight:800;margin-top:4px}
+.chip{font-size:11px;font-weight:800;letter-spacing:.8px;padding:4px 8px;border-radius:5px;background:var(--tq);color:var(--fondo)}
+.chip.man{background:var(--hambre)} .chip.off{background:var(--apagado);color:var(--texto)}
+.aviso{display:flex;gap:10px;padding:10px 12px;border-radius:8px;background:var(--hundido);border-left:3px solid var(--hambre);margin-top:8px}
+.aviso.grave{border-left-color:var(--rojo)} .aviso.leve{border-left-color:var(--suave)}
+.aviso b{display:block;font-size:14px}
+.vacio{font-size:13px;color:var(--suave);padding:10px 0 2px}
+.franja{display:flex;height:26px;border-radius:6px;overflow:hidden;margin-top:12px;background:repeating-linear-gradient(135deg,#1C3754 0 6px,#14283F 6px 12px)}
+.franja div{height:100%}
+.horas{position:relative;height:18px;margin-top:6px;font-size:11px;color:var(--suave)}
+.horas span{position:absolute;transform:translateX(-50%)}
+.leyenda{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--suave)}
+.leyenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.eventos{list-style:none;margin:12px 0 0;padding:0;border-top:1px solid var(--linea)}
+.eventos li{display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--linea);font-size:14px}
+.eventos time{font-size:12px;color:var(--suave);width:42px;flex:none}
+.eventos i{width:8px;height:8px;border-radius:4px;flex:none;transform:translateY(-1px)}
+.mas{background:none;border:0;color:var(--tq);font-weight:700;font-size:13px;padding:10px 0 0;cursor:pointer}
+.barras{display:flex;align-items:flex-end;gap:3px;height:80px;margin-top:12px}
+.barras div{flex:1;background:var(--tq);border-radius:3px 3px 0 0;min-height:2px;opacity:.85}
+.barras div.cero{background:var(--linea)}
+.dona-fila{display:flex;align-items:center;gap:16px;margin-top:10px}
+.sem{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:12px;align-items:end}
+.sem .col7{display:flex;flex-direction:column;align-items:center;gap:6px}
+.sem .pila{width:100%;max-width:34px;height:96px;border-radius:5px;overflow:hidden;display:flex;flex-direction:column-reverse;background:repeating-linear-gradient(135deg,#1C3754 0 5px,#14283F 5px 10px)}
+.sem small{font-size:11px;color:var(--suave)}
+.demo{background:#3A2F1C;color:var(--hambre);font-size:12px;font-weight:700;text-align:center;padding:6px}
+.banda{grid-column:1/-1;background:#3A2F1C;border:1px solid #6B5527;color:var(--hambre);border-radius:10px;padding:12px 14px;font-size:14px;display:none}
+.banda.ver{display:block}
+footer{max-width:1180px;margin:0 auto;padding:4px 16px 28px;font-size:12px;color:var(--suave);line-height:1.5}
+.gris{opacity:.45}
+@keyframes latir{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
+@keyframes punto{0%,100%{opacity:1}50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.corazon,.conexion i{animation:none}}
+</style>
+</head>
+<body>
+<div class="demo" id="demo" hidden>MODO DEMOSTRACIÓN · datos de ejemplo, no son de la silla</div>
+<header>
+  <img src="data:image/png;base64,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" alt="ALZIA">
+  <div class="tit">
+    <b>Monitoreo en casa</b>
+    <div class="conexion mal" id="conexion"><i></i><span id="conexionTxt">Conectando…</span></div>
+  </div>
+  <button class="campana" id="campana" type="button" aria-label="Avisos activos">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+    <span id="nAvisos">0</span>
+  </button>
+</header>
 
-<div class="aviso" id="aviso"></div>
+<main>
+  <div class="banda" id="banda"></div>
 
-<div class="card estado" id="cEst"><div class="aro" id="aro"><i id="aroi"></i></div>
-<div><div class="lab">Estado de la niña</div><div class="est" id="est">Sin dato</div>
-<div class="u" id="estu">Visión artificial</div></div></div>
+  <div class="col">
+    <!-- ánimo -->
+    <section class="card animo" aria-live="polite">
+      <div class="cara" id="cara"></div>
+      <div>
+        <div class="eti">Cómo se ve ahora</div>
+        <div class="estado" id="animoTxt">—</div>
+        <div class="nota" id="animoDesde">Esperando datos</div>
+      </div>
+    </section>
 
-<div class="g">
-<div class="card"><div class="fila"><div class="lab">Frecuencia cardiaca</div>
-<svg class="cor" id="cor" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.5 1.2 4.3 2.4.8-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg></div>
-<div class="big" id="bpm">--</div><div class="u" id="bpmu">lpm</div></div>
-<div class="card"><div class="lab">Oxigenación</div><div class="big" id="spo2">--</div><div class="u" id="spo2u">% SpO₂</div></div>
-<div class="card full"><div class="fila"><div><div class="lab">Distancia</div><div class="big" id="dist">--</div><div class="u">cm</div></div>
-<div style="text-align:right"><div class="lab" style="margin-bottom:8px">Sensor en el dedo</div><span class="dedo" id="dedo">No</span></div></div></div>
-</div>
+    <!-- signos -->
+    <div class="dos">
+      <section class="card" id="cardFc">
+        <div class="fila"><span class="eti">Latidos</span>
+          <svg class="corazon" width="16" height="16" viewBox="0 0 24 24" fill="#FF6B66" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 5.3 3.2 1.7-2 3.1-3.2 5.3-3.2 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg></div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-top:6px"><span class="grande" id="fc">—</span><span class="uni">lpm</span></div>
+        <div class="nota" style="margin-top:6px" id="fcNota">Sin dato</div>
+      </section>
+      <section class="card" id="cardSpo2">
+        <span class="eti">Oxígeno</span>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-top:6px"><span class="grande" id="spo2">—</span><span class="uni">%</span></div>
+        <div class="nota" style="margin-top:6px" id="spo2Nota">Sin dato</div>
+      </section>
+    </div>
 
-<div class="pie" id="pie">—</div>
-<div class="pie">Sistema de acompañamiento. No reemplaza un equipo médico.</div>
-</div>
+    <!-- pulso -->
+    <section class="card">
+      <div class="fila"><span class="eti">Pulso</span><span class="nota" id="ondaNota">sin señal</span></div>
+      <div class="onda" style="margin-top:10px"><svg id="ondaSvg" viewBox="0 0 340 90" width="100%" height="90" preserveAspectRatio="none" role="img" aria-label="Onda de pulso ilustrativa"><path id="ondaPath" d="M0 50 L340 50" fill="none" stroke="#1FC7C9" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></div>
+      <div class="nota" style="margin-top:8px">Dibujo de referencia al ritmo medido. La onda real se ve en la pantalla de la silla.</div>
+    </section>
+
+    <!-- silla -->
+    <section class="card" id="cardSilla">
+      <div class="fila"><span class="eti">La silla</span><span class="chip off" id="modo">—</span></div>
+      <div class="nota" style="margin-top:6px" id="sillaMov">Esperando datos</div>
+      <div class="silla3">
+        <div class="mini"><div class="nota">Altura</div><div class="v" id="alt">—</div></div>
+        <div class="mini"><div class="nota">Palas</div><div class="v" id="palas">—</div></div>
+        <div class="mini"><div class="nota">Batería</div><div class="v" id="bat">—</div></div>
+      </div>
+    </section>
+
+    <!-- avisos -->
+    <section class="card" id="avisos">
+      <div class="fila"><span class="eti">Avisos activos</span><span class="nota" id="avisosHora"></span></div>
+      <div id="listaAvisos"><div class="vacio">Sin avisos.</div></div>
+    </section>
+  </div>
+
+  <div class="col">
+    <!-- recorrido -->
+    <section class="card">
+      <div class="eti">Recorrido del día</div>
+      <div style="font-size:20px;font-weight:800;margin-top:4px">Cómo ha ido hoy</div>
+      <div class="franja" id="franja" role="img" aria-label="Estado de ánimo estimado a lo largo del día"></div>
+      <div class="horas" id="horas"></div>
+      <div class="leyenda">
+        <span><i style="background:var(--bien)"></i>Bienestar</span><span><i style="background:var(--neutro)"></i>Neutral</span>
+        <span><i style="background:var(--triste)"></i>Tristeza</span><span><i style="background:var(--hambre)"></i>Hambre</span>
+        <span><i style="background:repeating-linear-gradient(135deg,#1C3754 0 3px,#14283F 3px 6px)"></i>Sin dato</span>
+      </div>
+      <ul class="eventos" id="eventos"></ul>
+      <button class="mas" id="verMas" type="button" hidden>Ver todo el día</button>
+    </section>
+
+    <!-- latidos por hora -->
+    <section class="card">
+      <div class="fila"><span class="eti">Latidos por hora</span><span class="nota" id="fcProm"></span></div>
+      <div class="barras" id="barrasFc"></div>
+      <div class="horas" id="horasFc"></div>
+    </section>
+
+    <div class="dos" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+      <!-- emociones hoy -->
+      <section class="card">
+        <div class="eti">Emociones de hoy</div>
+        <div class="dona-fila"><svg width="110" height="110" viewBox="0 0 42 42" id="dona" role="img" aria-label="Reparto de estados de ánimo de hoy"></svg><div id="donaTxt" class="nota" style="line-height:1.8"></div></div>
+      </section>
+      <!-- semana -->
+      <section class="card">
+        <div class="eti">Últimos 7 días</div>
+        <div class="sem" id="semana"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ALZIA es un sistema de acompañamiento: el estado de ánimo es una estimación de la cámara y los signos son informativos.
+  <b>No reemplaza el monitor médico ni las alarmas del ventilador.</b> Datos de Adafruit IO, actualizados cada 15 s.
+</footer>
+
 <script>
-const AIO_USER='JuanOsunar';                 // usuario de Adafruit IO
-const FEEDS=['bpm','spo2','distancia','dedo','estado'];
-const EST={hambre:['Posible hambre','var(--hambre)'],tristeza:['Posible tristeza','var(--tristeza)'],
-bienestar:['Posible bienestar','var(--bienestar)'],neutral:['Posible neutralidad','var(--neutral)']};
-const $=i=>document.getElementById(i);
-let modo=null,ultimo=0;
+// ===================== Configuración =====================
+const AIO_USER = 'JuanOsunar';                       // usuario de Adafruit IO (los feeds deben estar en "Public")
+const API = 'https://io.adafruit.com/api/v2/' + AIO_USER + '/feeds/';
+const DEMO = new URLSearchParams(location.search).has('demo');
+const CADA = { ultimos: 15e3, eventos: 60e3, estadoHoy: 120e3, fcHora: 300e3, semana: 1800e3 };
+const SIN_DATOS_MS = 120e3;                          // la silla manda algo al menos cada 60 s
+const HUECO_MS = 15 * 60e3;                          // un estado de ánimo "dura" como máximo 15 min sin repetirse
 
-async function leerLocal(){const r=await fetch('/datos',{cache:'no-store'});if(!r.ok)throw 0;
-const d=await r.json();if(typeof d.bpm!=='number')throw 0;d.t=Date.now();return d;}
+const ANIMO = {
+  B: { t: 'Posible bienestar', c: '#5ED6B0' }, N: { t: 'Neutral', c: '#8FB3C9' },
+  T: { t: 'Posible tristeza', c: '#B49CF5' },  H: { t: 'Posible hambre', c: '#F2B65E' },
+  '-': { t: 'Sin dato de la cámara', c: '#5E7A93' }
+};
+const CARAS = {
+  B: '<circle cx="12" cy="12" r="9.5"/><path d="M8 14.2c1 1.4 2.4 2.1 4 2.1s3-.7 4-2.1"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.6"/>',
+  N: '<circle cx="12" cy="12" r="9.5"/><path d="M8.5 15h7"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.6"/>',
+  T: '<circle cx="12" cy="12" r="9.5"/><path d="M8 16.3c1-1.4 2.4-2.1 4-2.1s3 .7 4 2.1"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.6"/>',
+  H: '<circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="15.2" rx="2" ry="1.6"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.6"/>',
+  '-': '<circle cx="12" cy="12" r="9.5"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.2 2.4c-.5.2-.8.7-.8 1.2v.6M12 16.6h.01" stroke-width="2"/>'
+};
+const AVISOS = {
+  1: ['Pala izquierda (servo 1) bloqueada', 'Revisa que no haya nada en su camino.', 'media'],
+  2: ['Pala derecha (servo 2) bloqueada', 'Revisa que no haya nada en su camino.', 'media'],
+  3: ['Sensor de altura sin lectura', 'La altura automática queda bloqueada.', 'media'],
+  4: ['Sensor de pulso sin dedo', 'Revisa la pinza en el dedo.', 'leve'],
+  5: ['Batería baja', 'Conecta el cargador cuando termine el traslado.', 'media'],
+  6: ['Sin conexión con la placa de control', 'La pantalla no puede mover la silla.', 'grave'],
+  7: ['Paro de emergencia activado', 'La silla está detenida.', 'grave'],
+  8: ['Cámara sin señal', 'El estado de ánimo no se está midiendo.', 'leve']
+};
+const COLOR_EV = { S: '#1FC7C9', P: '#5ED6B0', M: '#8FB3C9', A: '#F2B65E', C: '#FF6B66' };
+const PALAS = ['Cerradas', 'Abiertas', 'Moviéndose', 'Bloqueada'];
 
-async function leerNube(){
- const res=await Promise.all(FEEDS.map(f=>fetch('https://io.adafruit.com/api/v2/'+AIO_USER+'/feeds/'+f+'/data/last',{cache:'no-store'})
-   .then(r=>r.ok?r.json():null).catch(()=>null)));
- const v=k=>{const x=res[FEEDS.indexOf(k)];return x?x.value:null};
- const ts=res.filter(Boolean).map(x=>Date.parse(x.created_at)||0);
- if(!ts.length)throw 0;
- return{bpm:+v('bpm')||0,spo2:+v('spo2')||0,ir:v('spo2')!==null,dist:v('distancia')!==null?+v('distancia'):-1,
-   dedo:v('dedo')==='1',estado:v('estado')||'',t:Math.max(...ts)};}
+const $ = id => document.getElementById(id);
+const hhmm = d => d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
+const hoy0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-function pintar(d){
- const viejo=(Date.now()-d.t)/1000, sinSenal=viejo>60;
- $('chip').className='chip'+(sinSenal?'':' on');
- $('conx').textContent=sinSenal?'Sin señal':(modo==='local'?'En vivo':'En línea');
- const av=$('aviso');
- if(sinSenal){av.style.display='block';av.textContent='No llegan datos de la silla desde hace '+Math.round(viejo/60)+' min. Revisa que esté encendida y con internet.';}
- else av.style.display='none';
- // estado de visión
- const e=EST[d.estado];
- const col=e?e[1]:'var(--neutral)';
- $('est').textContent=e?e[0]:'Sin dato';$('est').style.color=col;
- $('cEst').style.borderLeftColor=col;$('aro').style.borderColor=col;$('aroi').style.background=col;
- $('estu').textContent=e?'Visión artificial':'Esperando a la cámara';
- // signos
- const hay=d.dedo&&d.bpm>0;
- $('bpm').textContent=hay?d.bpm:'--';
- $('bpmu').textContent=!d.dedo?'Sensor sin contacto':(d.bpm>0?'lpm':'Midiendo…');
- const c=$('cor');if(hay){c.classList.add('late');c.style.setProperty('--per',(60/d.bpm).toFixed(2)+'s');}else c.classList.remove('late');
- if(d.ir){$('spo2').textContent=(d.dedo&&d.spo2>0)?d.spo2:'--';$('spo2u').textContent='% SpO₂';}
- else{$('spo2').textContent='N/D';$('spo2u').textContent='Requiere sensor IR';}
- $('dist').textContent=d.dist>=0?(+d.dist).toFixed(1):'--';
- $('dedo').textContent=d.dedo?'Sí':'No';$('dedo').className='dedo'+(d.dedo?' si':'');
- ultimo=d.t;
+// ===================== Lectura de Adafruit IO =====================
+let pausaHasta = 0;
+async function pedir(url) {
+  if (Date.now() < pausaHasta) throw new Error('pausa');
+  const r = await fetch(url, { cache: 'no-store' });
+  if (r.status === 429) { pausaHasta = Date.now() + 60e3; throw new Error('429'); }
+  if (r.status === 404) return null;                 // el feed todavía no existe o no tiene datos
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+const ultimo = k => DEMO ? Demo.ultimo(k) : pedir(API + k + '/data/last');
+const historia = (k, desde, hasta) => DEMO ? Demo.historia(k, desde, hasta) :
+  pedir(API + k + '/data?limit=1000&start_time=' + desde.toISOString() + (hasta ? '&end_time=' + hasta.toISOString() : '')).then(a => a || []);
+const porHora = (k, desde) => DEMO ? Demo.porHora(k, desde) :
+  pedir(API + k + '/data/chart?resolution=60&start_time=' + desde.toISOString()).then(j => (j && j.data) || []);
+
+// ===================== Estado de la página =====================
+const S = { u: {}, estHoy: [], evHoy: [], fcHora: [], semana: [], verTodo: false };
+
+async function cargarUltimos() {
+  const K = ['silla', 'bpm', 'spo2', 'dedo', 'estado', 'avisos'];
+  const r = await Promise.allSettled(K.map(ultimo));
+  let fallo = 0;
+  r.forEach((x, i) => { if (x.status === 'fulfilled') S.u[K[i]] = x.value; else fallo++; });
+  S.errorNube = fallo === K.length;
+  pintarArriba();
+}
+async function cargarEventos() {
+  const a = await historia('eventos', hoy0());
+  S.evHoy = a.map(d => { const [t, ...x] = String(d.value).split('|'); return { t: new Date(d.created_at), tipo: x.length ? t : 'S', txt: x.length ? x.join('|') : t }; })
+             .sort((p, q) => q.t - p.t);
+  pintarEventos();
+}
+async function cargarEstadoHoy() {
+  const a = await historia('estado', hoy0());
+  S.estHoy = a.map(d => ({ t: new Date(d.created_at), v: String(d.value).trim().toUpperCase() })).sort((p, q) => p.t - q.t);
+  pintarFranja(); pintarDona(); pintarAnimo();
+}
+async function cargarFcHora() {
+  const a = await porHora('bpm', hoy0());
+  S.fcHora = a.map(r => ({ t: new Date(r[0]), v: parseFloat(r[1]) })).filter(x => !isNaN(x.v));
+  pintarFcHora();
+}
+async function cargarSemana() {
+  const dias = [];
+  for (let i = 6; i >= 0; i--) {
+    const d0 = hoy0(); d0.setDate(d0.getDate() - i);
+    const d1 = new Date(d0); d1.setDate(d1.getDate() + 1);
+    let pts = [];
+    try { pts = (await historia('estado', d0, d1)).map(d => ({ t: new Date(d.created_at), v: String(d.value).trim().toUpperCase() })).sort((p, q) => p.t - q.t); } catch (e) {}
+    dias.push({ d: d0, min: minutosPorEstado(pts, d1) });
+  }
+  S.semana = dias; pintarSemana();
 }
 
-function reloj(){if(!ultimo)return;const s=Math.max(0,Math.round((Date.now()-ultimo)/1000));
- $('pie').textContent=(modo==='local'?'Conexión directa con la silla':'Vía internet')+' · actualizado hace '+(s<60?s+' s':Math.round(s/60)+' min');}
-
-async function ciclo(){
- try{
-  if(modo!=='nube'){try{pintar(await leerLocal());modo='local';}catch(e){if(modo==='local')throw e;modo='nube';}}
-  if(modo==='nube')pintar(await leerNube());
- }catch(e){$('chip').className='chip';$('conx').textContent='Sin conexión';}
- setTimeout(ciclo,modo==='local'?1000:10000);
+// Tramos de ánimo: cada dato vale hasta el siguiente (máximo 15 min)
+function tramos(pts, fin) {
+  const out = [];
+  pts.forEach((p, i) => {
+    const sig = i + 1 < pts.length ? pts[i + 1].t : fin;
+    const hasta = new Date(Math.min(sig, +p.t + HUECO_MS, fin));
+    if (hasta > p.t) out.push({ desde: p.t, hasta, v: p.v });
+  });
+  return out;
 }
-setInterval(reloj,1000);ciclo();
-</script></body></html>
+function minutosPorEstado(pts, fin) {
+  const m = { B: 0, N: 0, T: 0, H: 0 };
+  tramos(pts, Math.min(fin, Date.now())).forEach(s => { if (m[s.v] !== undefined) m[s.v] += (s.hasta - s.desde) / 60e3; });
+  return m;
+}
+
+// ===================== Pintar =====================
+function edad(d) { if (!d) return Infinity; return Date.now() - new Date(d.created_at); }
+function hace(ms) {
+  if (!isFinite(ms)) return 'sin datos todavía';
+  const s = Math.max(0, Math.round(ms / 1000));
+  if (s < 60) return 'hace ' + s + ' s';
+  if (s < 3600) return 'hace ' + Math.round(s / 60) + ' min';
+  return 'hace ' + Math.round(s / 3600) + ' h';
+}
+function pintarConexion() {
+  const mas = Math.min(...['silla', 'bpm', 'estado', 'avisos'].map(k => edad(S.u[k])));
+  const ok = mas < SIN_DATOS_MS;
+  $('conexion').className = 'conexion' + (ok ? '' : ' mal');
+  $('conexionTxt').textContent = S.errorNube ? 'No se pudo leer la nube · reintentando' : (ok ? 'En línea · ' : 'Sin datos de la silla · ') + hace(mas);
+  const b = $('banda');
+  if (!ok && !S.errorNube && isFinite(mas)) { b.textContent = 'La silla no ha enviado datos ' + hace(mas) + '. Puede estar apagada o sin internet. Lo que ves abajo es lo último que llegó.'; b.classList.add('ver'); }
+  else if (S.errorNube) { b.textContent = 'No se pudo leer la nube de datos. Revisa tu internet; la página vuelve a intentar sola.'; b.classList.add('ver'); }
+  else b.classList.remove('ver');
+  document.querySelectorAll('#cardSilla,#cardFc,#cardSpo2').forEach(c => c.classList.toggle('gris', !ok));
+  return ok;
+}
+function pintarAnimo() {
+  const e = S.u.estado;
+  let v = e ? String(e.value).trim().toUpperCase() : '-';
+  if (!ANIMO[v] || edad(e) > 3 * HUECO_MS) v = '-';
+  const a = ANIMO[v];
+  $('cara').style.borderColor = a.c;
+  $('cara').innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="' + a.c + '" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">' + CARAS[v] + '</svg>';
+  $('animoTxt').textContent = a.t; $('animoTxt').style.color = a.c;
+  let desde = e ? new Date(e.created_at) : null;
+  for (let i = S.estHoy.length - 1; i >= 0 && v !== '-'; i--) { if (S.estHoy[i].v === v) desde = S.estHoy[i].t; else break; }
+  $('animoDesde').textContent = v === '-' ? 'La cámara no está enviando un estado' : 'Desde las ' + hhmm(desde) + ' · es una estimación, no un diagnóstico';
+}
+function pintarArriba() {
+  const ok = pintarConexion();
+  pintarAnimo();
+  // signos
+  const dedo = S.u.dedo && String(S.u.dedo.value) === '1' && edad(S.u.dedo) < 15 * 60e3;
+  const fcOk = dedo && S.u.bpm && edad(S.u.bpm) < 60e3;
+  const fc = fcOk ? Math.round(parseFloat(S.u.bpm.value)) : null;
+  $('fc').textContent = fc || '—';
+  $('fcNota').textContent = fc ? hace(edad(S.u.bpm)) : (dedo ? 'Midiendo…' : 'Sensor sin dedo');
+  $('cardFc').classList.toggle('quieto', !fc);
+  const spOk = dedo && S.u.spo2 && edad(S.u.spo2) < 60e3;
+  $('spo2').textContent = spOk ? Math.round(parseFloat(S.u.spo2.value)) : '—';
+  $('spo2Nota').textContent = spOk ? hace(edad(S.u.spo2)) : (S.u.spo2 || S.errorNube ? 'Sin dato reciente' : 'El sensor actual no mide oxígeno');
+  Onda.bpm = ok ? fc : null;
+  $('ondaNota').textContent = Onda.bpm ? Onda.bpm + ' lpm' : 'sin señal';
+  // silla
+  const s = S.u.silla ? String(S.u.silla.value).split(',').map(Number) : null;
+  if (s && s.length >= 8) {
+    const [alt, modo, pi, pd, mov, bat, carg, ctrl] = s;
+    if (!ctrl) {
+      $('modo').className = 'chip off'; $('modo').textContent = 'SIN CONEXIÓN';
+      $('sillaMov').textContent = 'La pantalla perdió la conexión con la placa de control.';
+    } else {
+      $('modo').className = 'chip' + (modo ? '' : ' man'); $('modo').textContent = modo ? 'AUTOMÁTICO' : 'MANUAL';
+      $('sillaMov').textContent = ['Quieta', 'Subiendo', 'Bajando', 'Moviendo las palas'][mov] || 'Quieta';
+    }
+    $('alt').textContent = ctrl ? alt + ' cm' : '—';
+    const pal = (pi === 3 || pd === 3) ? 3 : (pi === pd ? pi : 2);
+    $('palas').textContent = ctrl ? PALAS[pal] : '—';
+    $('palas').style.color = pal === 1 ? 'var(--hambre)' : pal === 3 ? 'var(--rojo)' : pal === 0 ? 'var(--bien)' : '';
+    $('bat').textContent = ctrl ? bat + ' %' + (carg ? ' ⚡' : '') : '—';
+    $('bat').style.color = ctrl && bat < 20 ? 'var(--hambre)' : '';
+  }
+  // avisos
+  const av = S.u.avisos ? String(S.u.avisos.value).split(',').map(Number).filter(n => AVISOS[n]) : [];
+  $('listaAvisos').innerHTML = av.length ? av.map(n => {
+    const [t, d, g] = AVISOS[n];
+    return '<div class="aviso ' + (g === 'grave' ? 'grave' : g === 'leve' ? 'leve' : '') + '"><div><b>' + esc(t) + '</b><span class="nota">' + esc(d) + '</span></div></div>';
+  }).join('') : '<div class="vacio">Sin avisos.</div>';
+  $('avisosHora').textContent = S.u.avisos ? 'reportado ' + hace(edad(S.u.avisos)) : '';
+  $('nAvisos').textContent = av.length;
+  $('campana').classList.toggle('hay', av.length > 0);
+  $('campana').setAttribute('aria-label', av.length + ' avisos activos');
+}
+function ventanaHoy() {
+  const fin = new Date();
+  let ini = S.estHoy.length ? new Date(S.estHoy[0].t) : new Date(fin - 6 * 3600e3);
+  ini.setMinutes(0, 0, 0);
+  if (fin - ini < 4 * 3600e3) ini = new Date(+fin - 4 * 3600e3);
+  if (ini < hoy0()) ini = hoy0();
+  return [ini, fin];
+}
+function pintarHoras(el, ini, fin) {
+  const span = fin - ini, paso = span > 10 * 3600e3 ? 3 : span > 5 * 3600e3 ? 2 : 1;
+  let h = new Date(ini); h.setMinutes(0, 0, 0); h.setHours(h.getHours() + 1);
+  let html = '';
+  for (; h < fin; h.setHours(h.getHours() + 1)) if (h.getHours() % paso === 0) {
+    const x = (h - ini) / span * 100;
+    if (x > 4 && x < 96) html += '<span style="left:' + x + '%">' + String(h.getHours()).padStart(2, '0') + ':00</span>';
+  }
+  el.innerHTML = html;
+}
+function pintarFranja() {
+  const [ini, fin] = ventanaHoy(), span = fin - ini;
+  const ts = tramos(S.estHoy.filter(p => p.t >= ini - HUECO_MS), fin);
+  let html = '', cursor = +ini;
+  ts.forEach(s => {
+    const a = Math.max(+s.desde, +ini), b = +s.hasta;
+    if (b <= cursor) return;
+    if (a > cursor) html += '<div style="width:' + ((a - cursor) / span * 100) + '%"></div>';
+    const c = ANIMO[s.v] && s.v !== '-' ? ANIMO[s.v].c : 'transparent';
+    html += '<div title="' + esc((ANIMO[s.v] || ANIMO['-']).t + ' · ' + hhmm(new Date(Math.max(a, cursor)))) + '" style="width:' + ((b - Math.max(a, cursor)) / span * 100) + '%;background:' + c + '"></div>';
+    cursor = b;
+  });
+  $('franja').innerHTML = html;
+  pintarHoras($('horas'), ini, fin);
+}
+function pintarEventos() {
+  const lista = S.verTodo ? S.evHoy : S.evHoy.slice(0, 6);
+  $('eventos').innerHTML = lista.length ? lista.map(e =>
+    '<li><time>' + hhmm(e.t) + '</time><i style="background:' + (COLOR_EV[e.tipo] || '#8FB3C9') + '"></i><span>' + esc(e.txt) + '</span></li>').join('')
+    : '<li><span class="nota">Todavía no hay movimientos de la silla hoy.</span></li>';
+  $('verMas').hidden = S.evHoy.length <= 6;
+  $('verMas').textContent = S.verTodo ? 'Ver menos' : 'Ver todo el día (' + S.evHoy.length + ')';
+}
+function pintarFcHora() {
+  const h0 = hoy0(), ahora = new Date(), n = ahora.getHours() + 1;
+  const vals = Array.from({ length: n }, (_, h) => { const x = S.fcHora.find(p => p.t.getHours() === h && p.t >= h0); return x ? x.v : 0; });
+  const ini = vals.findIndex(v => v > 0);
+  const desde = ini < 0 ? Math.max(0, n - 8) : Math.min(ini, n - 4 < 0 ? 0 : n - 4);
+  const vista = vals.slice(desde);
+  const max = Math.max(60, ...vista), min = Math.min(...vista.filter(v => v > 0), 50) - 10;
+  $('barrasFc').innerHTML = vista.map((v, i) => '<div class="' + (v ? '' : 'cero') + '" title="' + String(desde + i).padStart(2, '0') + ':00 · ' + (v ? Math.round(v) + ' lpm' : 'sin dato') + '" style="height:' + (v ? Math.max(6, (v - min) / (max - min) * 100) : 3) + '%"></div>').join('');
+  const conDato = vista.filter(v => v > 0);
+  $('fcProm').textContent = conDato.length ? 'promedio hoy ' + Math.round(conDato.reduce((a, b) => a + b, 0) / conDato.length) + ' lpm' : 'sin datos hoy';
+  const i0 = new Date(h0); i0.setHours(desde); const f0 = new Date(h0); f0.setHours(n);
+  pintarHoras($('horasFc'), i0, f0);
+}
+function pintarDona() {
+  const m = minutosPorEstado(S.estHoy, Date.now());
+  const tot = Object.values(m).reduce((a, b) => a + b, 0);
+  const svg = $('dona');
+  if (tot < 1) { svg.innerHTML = '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#1C3754" stroke-width="6"/>'; $('donaTxt').textContent = 'Sin datos de la cámara hoy.'; return; }
+  let acum = 0, html = '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#1C3754" stroke-width="6"/>', txt = '';
+  ['B', 'N', 'T', 'H'].forEach(k => {
+    const p = m[k] / tot * 100;
+    if (p > 0) html += '<circle cx="21" cy="21" r="15.9" fill="none" stroke="' + ANIMO[k].c + '" stroke-width="6" stroke-dasharray="' + p + ' ' + (100 - p) + '" stroke-dashoffset="' + (25 - acum) + '"/>';
+    acum += p;
+    txt += '<div><i style="display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;background:' + ANIMO[k].c + '"></i>' + ({ B: 'Bienestar', N: 'Neutral', T: 'Tristeza', H: 'Hambre' })[k] + ' <b style="color:#fff">' + Math.round(p) + ' %</b></div>';
+  });
+  svg.innerHTML = html; $('donaTxt').innerHTML = txt;
+}
+function pintarSemana() {
+  const L = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+  $('semana').innerHTML = S.semana.map(d => {
+    const tot = Object.values(d.min).reduce((a, b) => a + b, 0);
+    const pila = tot < 1 ? '' : ['B', 'N', 'T', 'H'].map(k => d.min[k] ? '<div style="height:' + (d.min[k] / tot * 100) + '%;background:' + ANIMO[k].c + '"></div>' : '').join('');
+    return '<div class="col7"><div class="pila" title="' + (tot < 1 ? 'Sin datos' : Math.round(tot / 60 * 10) / 10 + ' h medidas') + '">' + pila + '</div><small>' + L[d.d.getDay()] + '</small></div>';
+  }).join('');
+}
+
+// ===================== Onda ilustrativa =====================
+const Onda = { bpm: null, fase: 0, t: performance.now() };
+function forma(x) {                                   // un latido típico de pulso (0..1 -> 0..1)
+  const g = (m, s, a) => a * Math.exp(-((x - m) ** 2) / (2 * s * s));
+  return g(0.18, 0.06, 1) + g(0.42, 0.07, 0.38) + g(0.33, 0.02, -0.12);
+}
+function animar(ahora) {
+  const dt = (ahora - Onda.t) / 1000; Onda.t = ahora;
+  const N = 120, latidosVisibles = 3;
+  let d = '';
+  if (Onda.bpm) {
+    Onda.fase = (Onda.fase + dt * Onda.bpm / 60) % 1000;
+    for (let i = 0; i <= N; i++) {
+      const u = i / N * latidosVisibles + Onda.fase, y = forma(u - Math.floor(u));
+      d += (i ? 'L' : 'M') + (i / N * 340).toFixed(1) + ' ' + (78 - y * 62).toFixed(1);
+    }
+  } else d = 'M0 60 L340 60';
+  $('ondaPath').setAttribute('d', d);
+  requestAnimationFrame(animar);
+}
+
+// ===================== Datos de demostración (?demo) =====================
+const Demo = (() => {
+  const ahora = () => new Date();
+  const hace = s => new Date(Date.now() - s * 1000).toISOString();
+  const seq = (() => { const h = hoy0(); const out = []; let t = new Date(h); t.setHours(7, 0, 0, 0); const pat = 'BBBNBBHHBBBNNTBBBBNBBBHBBBNB'; let i = 0;
+    while (t < ahora()) { out.push({ created_at: t.toISOString(), value: pat[i++ % pat.length] }); t = new Date(+t + 10 * 60e3); } return out; })();
+  return {
+    ultimo: async k => ({
+      silla: { value: '52,1,0,0,0,78,0,1', created_at: hace(20) }, bpm: { value: String(82 + Math.round(Math.random() * 6)), created_at: hace(6) },
+      spo2: { value: '97', created_at: hace(9) }, dedo: { value: '1', created_at: hace(300) },
+      estado: { value: seq.length ? seq[seq.length - 1].value : 'B', created_at: hace(120) }, avisos: { value: '5', created_at: hace(40) }
+    })[k] || null,
+    historia: async (k, desde, hasta) => {
+      if (k === 'estado') {
+        if (+desde >= +hoy0()) return seq.slice().reverse();
+        const out = []; for (let t = new Date(+desde + 8 * 3600e3); t < new Date(+desde + 20 * 3600e3); t = new Date(+t + 10 * 60e3)) out.push({ created_at: t.toISOString(), value: 'BBBNNTHB'[Math.floor(Math.random() * 8)] });
+        return out.reverse();
+      }
+      if (k === 'eventos') {
+        const e = [['08:05', 'P|Palas abiertas'], ['08:06', 'S|Subiendo desde 47 cm'], ['08:06', 'S|Quieta a 60 cm'], ['08:09', 'P|Palas cerradas'],
+          ['10:30', 'M|Modo manual'], ['10:31', 'M|Modo automático'], ['15:10', 'A|Batería baja'], ['16:58', 'S|Quieta a 52 cm']];
+        return e.map(([h, v]) => { const d = hoy0(); d.setHours(+h.slice(0, 2), +h.slice(3)); return { created_at: d.toISOString(), value: v }; }).filter(x => new Date(x.created_at) < ahora()).reverse();
+      }
+      return [];
+    },
+    porHora: async () => { const out = []; for (let h = 7; h <= ahora().getHours(); h++) { const d = hoy0(); d.setHours(h); out.push([d.toISOString(), String(76 + Math.round(Math.random() * 18))]); } return out; }
+  };
+})();
+
+// ===================== Arranque =====================
+function cada(fn, ms) { const run = () => fn().catch(e => { if (String(e).includes('429')) $('conexionTxt').textContent = 'La nube está ocupada · reintentando'; }); run(); return setInterval(run, ms); }
+$('demo').hidden = !DEMO;
+$('campana').onclick = () => $('avisos').scrollIntoView({ behavior: 'smooth', block: 'center' });
+$('verMas').onclick = () => { S.verTodo = !S.verTodo; pintarEventos(); };
+cada(cargarUltimos, CADA.ultimos);
+cada(cargarEventos, CADA.eventos);
+cada(cargarEstadoHoy, CADA.estadoHoy);
+cada(cargarFcHora, CADA.fcHora);
+setTimeout(() => cada(cargarSemana, CADA.semana), 4000);   // lo más pesado, un poco después
+setInterval(pintarConexion, 1000);
+setInterval(() => { pintarFranja(); }, 60e3);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { cargarUltimos().catch(() => {}); cargarEventos().catch(() => {}); } });
+pintarEventos(); pintarFcHora(); pintarDona(); pintarFranja();
+requestAnimationFrame(animar);
+</script>
+</body>
+</html>
